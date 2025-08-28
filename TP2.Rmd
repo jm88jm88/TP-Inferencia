@@ -1,0 +1,131 @@
+---
+title: "TP2"
+author: "Grupo 13"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+# Punto 1: Distribución Uniforme
+
+## (1.a) Esperanza y varianza
+
+Para una variable \(X \sim U(a,b)\):
+
+\[
+E(X) = \frac{a+b}{2}, \quad
+Var(X) = \frac{(b-a)^2}{12}.
+\]
+
+En nuestro caso, con \(a=0\) y \(b=18\):
+
+\[
+E(X) = \frac{0+18}{2} = 9, \quad
+Var(X) = \frac{18^2}{12} = \frac{324}{12} = 27.
+\]
+
+## (1.b) Función generadora de muestras
+
+Debemos escribir una función que genere \(R\) realizaciones de \(X\).  
+Usamos nuestro número de grupo (13) como semilla para que los resultados sean reproducibles.
+
+```{r}
+set.seed(13)
+
+X_dist <- function(R) {
+  runif(n = R, min = 0, max = 18)
+}
+```
+
+## (1.c) Histogramas con R = 100 y R = 10^4
+
+
+```{r}
+x100  <- X_dist(100)
+x1e4  <- X_dist(10^4)
+
+par(mfrow = c(1,2))
+hist(x100, breaks = 30, main = "X, R = 100", xlab = "x")
+hist(x1e4, breaks = 30, main = "X, R = 10^4", xlab = "x")
+par(mfrow = c(1,1))
+
+
+```
+Vemos que, al tomar pocas observaciones (R = 100), el histograma es ruidoso, pero al aumentar el tamaño de la muestra a R = 10^4 la distribución se aproxima a la forma uniforme en [0,18].
+
+## (1.d) Promedios acumulados y Ley de los Grandes Números
+
+Construimos los promedios acumulados:
+
+\[
+m_n = \frac{1}{n}\sum_{i=1}^n X_i, \quad n=1,2,\dots,10^4
+\]
+
+y los comparamos con el valor teórico \(E(X)=9\).
+
+```{r, fig.width=7, fig.height=5}
+R <- 10^4
+manyX <- X_dist(R)
+
+m_n <- cumsum(manyX) / seq_along(manyX)
+
+plot(seq_along(m_n), m_n, type = "l", lwd = 1,
+     xlab = "n", ylab = "Promedio m_n",
+     main = "Promedios acumulados (X ~ U(0,18))")
+abline(h = 9, col = "red", lty = 2)
+
+# bandas de referencia +/- 2*sd/sqrt(n)
+sigma2 <- 27
+sd_seq <- sqrt(sigma2 / seq_along(m_n))
+lines(seq_along(m_n), 9 + 2*sd_seq, lty = 3)
+lines(seq_along(m_n), 9 - 2*sd_seq, lty = 3)
+
+legend("topright",
+       legend = c("m_n", "E(X)=9", "+/- 2*sd/sqrt(n)"),
+       lty = c(1,2,3), bty = "n")
+
+```
+
+# Punto 2: Distribución Exponencial
+
+## (1.a) Esperanza y varianza
+
+Sea \(Y \sim \text{Exp}(\lambda)\) con parámetro \(\lambda = \tfrac{1}{9}\).  
+Recordemos que para una variable exponencial se cumple:
+
+\[
+E(Y) = \frac{1}{\lambda}, \quad Var(Y) = \frac{1}{\lambda^2}.
+\]
+
+En nuestro caso, con \(\lambda = \tfrac{1}{9}\):
+
+\[
+E(Y) = \frac{1}{1/9} = 9, \quad Var(Y) = \frac{1}{(1/9)^2} = 81.
+\]
+
+## (1.b) Función generadora de muestras
+
+Definimos la función generadora de muestras \(Y\_dist(R)\) que devuelve \(R\) realizaciones de \(Y\). Usamos nuestra semilla de grupo (13) para asegurar reproducibilidad.
+
+```{r}
+set.seed(13)
+
+Y_dist <- function(R) {
+  rexp(n = R, rate = 1/9)
+}
+```
+
+## (1.c) Histogramas con R = 100 y R = 10^4
+
+```{r}
+y100  <- Y_dist(100)
+y1e4  <- Y_dist(10^4)
+
+par(mfrow = c(1,2))
+hist(y100, breaks = 30, main = "Y ~ Exp(1/9), R = 100", xlab = "y", freq = FALSE)
+hist(y1e4, breaks = 30, main = "Y ~ Exp(1/9), R = 10^4", xlab = "y", freq = FALSE)
+par(mfrow = c(1,1))
+```
+
+Con R=100 el histograma es irregular, aunque ya se aprecia la forma decreciente de la distribución exponencial. Con R=10^^4 la forma se ajusta mucho más a la curva teórica: una densidad que comienza alta en valores cercanos a 0 y decae exponencialmente a medida que 
+y aumenta. Esto confirma que al aumentar el tamaño de la muestra, la distribución empírica se aproxima a la distribución teórica.
+
