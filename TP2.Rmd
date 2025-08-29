@@ -1,56 +1,133 @@
 ---
-title: "TP2"
-author: "Grupo 13"
-date: "`r Sys.Date()`"
+title: "Entregable TP2"
+subtitle: "Juan Merhle, Juan Martin Goyeneche, Luciano Pozzoli"
 output: pdf_document
+date: "2025-08-26"
 ---
 
-# Punto 1: Distribución Uniforme
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-## (1.a) Esperanza y varianza
+## Ejercicio 1
 
-Para una variable \(X \sim U(a,b)\):
+Sea \( X \sim \text{U}(0,18) \) una variable aleatoria con distribución uniforme entre 0 y 18.  
+Cuando queremos calcular el valor teorico, tanto de la esperanza como de la varianza en una variable continua, debemos hacer uso de la integral.
+En las variables aleatorias discretas tenemos un conjunto finito de valores de los cuales podemos hacer una suma ponderada, pero este no es el caso para las variables aleatorias continuas. Entonces, recurrimos al uso de la integral. En esta usamos los infinitos valores que puede tomar la variable aleatoria, representados con \( x \) y hacemos la ponderacion multiplicandolos por su funcion de densidad de probabilidad \( f_X(x) \).
 
+Entonces, la esperanza se calcula con:
+\( \mathbb{E}(X) = \int_{-\infty}^{\infty} x \cdot f_X(x) \, dx \)
+
+Pero, nuestra funcion de probabilidad es distinta de cero solo cuando x esta entre 0 y 18. Ademas, sabemos como esta definida la funcion de probabilidad de la uniforme. Entonces, la integral para esta funcion especifica nos quedaria de la siguiente forma:
 \[
-E(X) = \frac{a+b}{2}, \quad
-Var(X) = \frac{(b-a)^2}{12}.
+\mathbb{E}(X) = \int_{a}^{b} x \cdot f_X(x) \, dx = \int_{0}^{18} x \cdot \frac{1}{18} \, dx
 \]
 
-En nuestro caso, con \(a=0\) y \(b=18\):
 
+Resolvemos la integral:
 \[
-E(X) = \frac{0+18}{2} = 9, \quad
-Var(X) = \frac{18^2}{12} = \frac{324}{12} = 27.
+\int_0^{18} x \, dx = \left. \frac{x^2}{2} \right|_0^{18} = \frac{18^2}{2} - \frac{0^2}{2} = \frac{324}{2} = 162
 \]
 
-## (1.b) Función generadora de muestras
+Entonces:
+\[
+\mathbb{E}(X) = \frac{1}{18} \cdot 162 = 9
+\]
 
-Debemos escribir una función que genere \(R\) realizaciones de \(X\).  
-Usamos nuestro número de grupo (13) como semilla para que los resultados sean reproducibles.
+Por lo tanto, la esperanza teórica es:
+\[
+\boxed{\mathbb{E}(X) = 9}
+\]
 
+En cuanto a la varianza, sabemos que el valor teorico tiene la siguiente forma:
+\[
+\text{Var}(X) = \mathbb{E}(X^2) - \left( \mathbb{E}(X) \right)^2
+\]
+
+Afortunadamente ya contamos con el valor de la esperanza y podemos elevarlo al cuadrado sin problema. Lo que si nos resta hacer es el calculo del primer termino de la resta. Para esto tenemos que volver a la integral con la cual resolvemos la esperanza pero utilizar el cuadrado de x en lugar de x. Entonces:
+\[
+\mathbb{E}(X^2) = \int_{0}^{18} x^2 \cdot f_X(x) \, dx = \int_{0}^{18} x^2 \cdot \frac{1}{18} \, dx
+\]
+
+Sacamos la constante \( \frac{1}{18} \) fuera de la integral:
+\[
+\mathbb{E}(X^2) = \frac{1}{18} \int_{0}^{18} x^2 \, dx
+\]
+
+Calculamos la integral:
+\[
+\int_{0}^{18} x^2 \, dx = \left. \frac{x^3}{3} \right|_0^{18} = \frac{18^3}{3} - \frac{0^3}{3} = \frac{5832}{3} = 1944
+\]
+
+Entonces:
+\[
+\mathbb{E}(X^2) = \frac{1}{18} \cdot 1944 = 108
+\]
+
+\[
+\mathbb{E}(X^2) = 108
+\]
+
+Teniendo ya todos los valores pertinentes mostramos que:
+\[
+\text{Var}(X) = \mathbb{E}(X^2) - \left( \mathbb{E}(X) \right)^2 = 108 - 81 = 27
+\]
+
+Por lo tanto, la varianza teórica es:
+\[
+\boxed{\text{Var}(X) = 27}
+\]
+
+### Inciso B
 ```{r}
 set.seed(13)
-
-X_dist <- function(R) {
-  runif(n = R, min = 0, max = 18)
+X_dist <- function(R){
+  return(runif(n= R, min= 0, max=18))
 }
 ```
+
 
 ## (1.c) Histogramas con R = 100 y R = 10^4
 
 
 ```{r}
-x100  <- X_dist(100)
-x1e4  <- X_dist(10^4)
+R100  <- X_dist(100)
+R1e4  <- X_dist(10^4)
+
+summary(R100)
+summary(R1e4)
+
 
 par(mfrow = c(1,2))
-hist(x100, breaks = 30, main = "X, R = 100", xlab = "x")
-hist(x1e4, breaks = 30, main = "X, R = 10^4", xlab = "x")
+hist(R100, breaks = 30, main = "X, R = 100", xlab = "x")
+hist(R1e4, breaks = 30, main = "X, R = 10000", xlab = "x")
 par(mfrow = c(1,1))
 
 
 ```
-Vemos que, al tomar pocas observaciones (R = 100), el histograma es ruidoso, pero al aumentar el tamaño de la muestra a R = 10^4 la distribución se aproxima a la forma uniforme en [0,18].
+
+La Ley de los Grandes Números nos dice que a medida que el tamaño de la muestra (n) aumente, la diferencia entre la media muestral y la media poblacional disminuye. En otras palabras, con un mayor n en la muestra deberiamos observar que la media muestral se acerca a la esperanza.
+
+En nuestro caso la cantidad de valores que generan las muestras aleatorias estan definidas por el parametro R. Y queremos observar que a mayor R la media muestral se aproxima al valor teorico de la esperanza que calculamos anteriormente. Los resultados obtenidos fueron:
+
+\[
+\overline{X}_{100}= `r mean(R100)` \quad
+\overline{X}_{10000} = `r mean(R1e4)`
+\]
+
+Vemos que en estas observaciones se cumple que al aumentar n estamos aproximandonos al valor teorico de \( \mathbb{E}(X) = 9\). La diferencia de los promedios muestrales con la esperanza teorica es casi 10 veces menor cuando aumentamos de R=100 a R=10000. Si vieramos los graficos y juzgaramos por intuicion, tambien coincidiriamos que R=10000 es mas parecido a una distribución Uniforme.
+
+De la misma forma, esta tendencia tambien puede observarse en la varianza. Veamos si a medida que el tamaño de la muestra aumenta, se estabiliza la varianza muestral. Los datos que observamos de las varianzas muestrales fueron:
+
+\[
+\text{Var}(X_{100}) = `r var(R100)` \quad
+\text{Var}(X_{10000}) = `r var(R1e4)`
+\]
+
+En este caso la convergencia de las varianzas muestrales hacia su valor teorico de 27 es muy evidente. A medida que aumentamos el tamaño de la muestra la dispersion se reduce y se asemeja a la varianza de la distribución.
+
+Cabe destacar que estas muestras de datos se realizan con una sola iteración para cada tamaño, y los datos generados son aleatorios.
+
 
 ## (1.d) Promedios acumulados y Ley de los Grandes Números
 
@@ -79,30 +156,178 @@ sd_seq <- sqrt(sigma2 / seq_along(m_n))
 lines(seq_along(m_n), 9 + 2*sd_seq, lty = 3)
 lines(seq_along(m_n), 9 - 2*sd_seq, lty = 3)
 
-legend("topright",
+legend("bottomright",
        legend = c("m_n", "E(X)=9", "+/- 2*sd/sqrt(n)"),
        lty = c(1,2,3), bty = "n")
 
 ```
 
-# Punto 2: Distribución Exponencial
+## Ejercicio 2
 
-## (1.a) Esperanza y varianza
-
-Sea \(Y \sim \text{Exp}(\lambda)\) con parámetro \(\lambda = \tfrac{1}{9}\).  
-Recordemos que para una variable exponencial se cumple:
-
+En este caso tenemos una variable aleatoria con distribución exponencial. \( Y \sim \text{Exp}(1/9) \)
+De la misma manera vamos a usar la integral para generar el calculo teorico de la esperanza y luego de la varianza.
 \[
-E(Y) = \frac{1}{\lambda}, \quad Var(Y) = \frac{1}{\lambda^2}.
+\mathbb{E}(Y) = \int_{-\infty}^{\infty} y \cdot f_Y(y) \, dy
 \]
 
-En nuestro caso, con \(\lambda = \tfrac{1}{9}\):
-
+A su vez, conocemos para la distribución exponencial, su función de densidad:
 \[
-E(Y) = \frac{1}{1/9} = 9, \quad Var(Y) = \frac{1}{(1/9)^2} = 81.
+f_Y(y) = \lambda e^{-\lambda y}, \quad \text{para } y \geq 0
 \]
 
-## (1.b) Función generadora de muestras
+Entonces, la esperanza de \( Y \) se calcula como:
+\[
+\mathbb{E}(Y) = \int_{0}^{\infty} y \cdot \frac{1}{9} e^{-\frac{1}{9} y} \, dy
+\]
+
+Sacamos la constante fuera de la integral:
+\[
+\mathbb{E}(Y) = \frac{1}{9} \int_0^{\infty} y \cdot e^{-\frac{1}{9} y} \, dy
+\]
+
+Aplicamos integración por partes. Usamos:
+\[
+\int u \, dv = uv - \int v \, du
+\]
+
+Tomamos:
+\[
+u = y \quad \Rightarrow \quad du = dy \\
+dv = e^{-\frac{1}{9} y} dy \quad \Rightarrow \quad v = -9 e^{-\frac{1}{9} y}
+\]
+
+Entonces:
+\[
+\int_0^{\infty} y \cdot e^{-\frac{1}{9} y} dy = 
+\left. -9y \cdot e^{-\frac{1}{9} y} \right|_0^{\infty} 
++ \int_0^{\infty} 9 e^{-\frac{1}{9} y} dy
+\]
+
+Evaluamos el primer término:
+\[
+\lim_{y \to \infty} -9y \cdot e^{-\frac{1}{9} y} = 0
+\quad \text{(porque la exponencial decrece más rápido que y crece)} \\
+\text{Y cuando } y = 0, \quad -9 \cdot 0 \cdot e^0 = 0
+\]
+
+Entonces ese término da 0.
+
+Evaluamos la integral restante:
+\[
+\int_0^{\infty} 9 e^{-\frac{1}{9} y} dy
+\]
+
+Sacamos el 9 fuera:
+\[
+= 9 \int_0^{\infty} e^{-\frac{1}{9} y} dy
+\]
+
+Hacemos la integral:
+\[
+\int_0^{\infty} e^{-\frac{1}{9} y} dy = 
+\left. \frac{-1}{\frac{1}{9}} e^{-\frac{1}{9} y} \right|_0^{\infty} 
+= -9 \left( 0 - 1 \right) = 9
+\]
+
+Volvemos a la esperanza:
+\[
+\mathbb{E}(Y) = \frac{1}{9} \cdot 9 = 9
+\]
+
+Resultado final:
+\[
+\boxed{\mathbb{E}(Y) = 9}
+\]
+
+
+
+Teniendo el valor teorico de la esperanza, recordamos que la formula de la varianza es:
+\[
+\text{Var}(Y) = \mathbb{E}(Y^2) - \left( \mathbb{E}(Y) \right)^2
+\]
+
+El calculo anterior nos sirve dado que nos resuelve uno de los terminos ya que hacer el cuadrado de la esperanza es una cuenta fácil, pero si necesitamos volver a hacer la integral con el cuadrado de y para poder resolver la primera parte de la resta.
+
+La esperanza de \( Y^2 \) se calcula como:
+\[
+\mathbb{E}(Y^2) = \int_0^{\infty} y^2 \cdot \frac{1}{9} e^{-\frac{1}{9} y} \, dy
+\]
+
+Sacamos la constante fuera de la integral:
+\[
+\mathbb{E}(Y^2) = \frac{1}{9} \int_0^{\infty} y^2 \cdot e^{-\frac{1}{9} y} \, dy
+\]
+
+Ahora resolvemos la integral por partes dos veces.
+
+Primera integración por partes:  
+Sea  
+\[
+u = y^2 \quad \Rightarrow \quad du = 2y \, dy \\
+dv = e^{-\frac{1}{9} y} dy \quad \Rightarrow \quad v = -9 e^{-\frac{1}{9} y}
+\]
+
+Aplicamos:
+\[
+\int y^2 \cdot e^{-\frac{1}{9} y} dy = -9 y^2 e^{-\frac{1}{9} y} + \int 18y \cdot e^{-\frac{1}{9} y} dy
+\]
+
+Ahora resolvemos la segunda integral:  
+\[
+\int 18y \cdot e^{-\frac{1}{9} y} dy
+\]
+
+Segunda integración por partes:
+\[
+u = y \quad \Rightarrow \quad du = dy \\
+dv = e^{-\frac{1}{9} y} dy \quad \Rightarrow \quad v = -9 e^{-\frac{1}{9} y}
+\]
+
+Entonces:
+\[
+\int 18y \cdot e^{-\frac{1}{9} y} dy = 18 \left( -9y e^{-\frac{1}{9} y} + \int 9 e^{-\frac{1}{9} y} dy \right)
+\]
+
+Resolvemos la última integral:
+\[
+\int 9 e^{-\frac{1}{9} y} dy = -81 e^{-\frac{1}{9} y}
+\]
+
+Sumamos todo:
+\[
+\int y^2 e^{-\frac{1}{9} y} dy = -9 y^2 e^{-\frac{1}{9} y} + 18 \left( -9y e^{-\frac{1}{9} y} - 81 e^{-\frac{1}{9} y} \right)
+\]
+
+Multiplicamos y reordenamos:
+\[
+= -9 y^2 e^{-\frac{1}{9} y} - 162 y e^{-\frac{1}{9} y} - 1458 e^{-\frac{1}{9} y}
+\]
+
+Evaluamos en los límites \( 0 \) a \( \infty \). Todos los términos tienden a 0 en \( y \to \infty \), y en \( y = 0 \) queda:
+\[
+-0 - 0 - 1458 \cdot 1 = -1458
+\]
+
+Entonces la integral completa da 1458, y por lo tanto:
+\[
+\mathbb{E}(Y^2) = \frac{1}{9} \cdot 1458 = 162
+\]
+
+Resultado final:
+\[
+\mathbb{E}(Y^2) = 162
+\]
+
+
+Teniendo ya todos los terminos necesarios, procedemos a hacer el calculo teorico de la varianza.
+\[
+\text{Var}(Y) = \mathbb{E}(Y^2) - \left( \mathbb{E}(Y) \right)^2 = 162 - 81 = 81
+\]
+\[
+\boxed{\text{Var}(Y) = 81}
+\]
+
+## (2.b) Función generadora de muestras
 
 Definimos la función generadora de muestras \(Y\_dist(R)\) que devuelve \(R\) realizaciones de \(Y\). Usamos nuestra semilla de grupo (13) para asegurar reproducibilidad.
 
@@ -114,18 +339,33 @@ Y_dist <- function(R) {
 }
 ```
 
-## (1.c) Histogramas con R = 100 y R = 10^4
+## (2.c) Histogramas con R = 100 y R = 10^4
+
 
 ```{r}
-y100  <- Y_dist(100)
-y1e4  <- Y_dist(10^4)
+YR100  <- Y_dist(100)
+YR1e4  <- Y_dist(10^4)
+
+summary(YR100)
+summary(YR1e4)
+
 
 par(mfrow = c(1,2))
-hist(y100, breaks = 30, main = "Y ~ Exp(1/9), R = 100", xlab = "y", freq = FALSE)
-hist(y1e4, breaks = 30, main = "Y ~ Exp(1/9), R = 10^4", xlab = "y", freq = FALSE)
+hist(YR100, breaks = 30, main = "Y, R = 100", xlab = "x")
+hist(YR1e4, breaks = 30, main = "Y, R = 10000", xlab = "x")
 par(mfrow = c(1,1))
 ```
 
-Con R=100 el histograma es irregular, aunque ya se aprecia la forma decreciente de la distribución exponencial. Con R=10^^4 la forma se ajusta mucho más a la curva teórica: una densidad que comienza alta en valores cercanos a 0 y decae exponencialmente a medida que 
-y aumenta. Esto confirma que al aumentar el tamaño de la muestra, la distribución empírica se aproxima a la distribución teórica.
+En el caso de la media, podemos notar que a medida que aumentamos R, obtenemos valores cada vez mas aproximados a la esperanza teorica de valor 9. Esta observacion se sustenta con lo que dice la Ley de lo Grandes Numeros. Los valores obtenidos de las medias muestrales son:
+\[
+\overline{Y}_{100} = `r mean(YR100)` \quad
+\overline{Y}_{10000} = `r mean(YR1e4)`
+\]
+En este caso podemos ver que la convergencia se cumple y queda en evidencia que la diferencia entre E(Y)=9 y las medias muestrales disminuye a medida que aumenta el tamaño de la muestra.
+
+Lo mismo podemos observar con los valores de la varianza. Al aumentar el n notamos un acercamiento muy grande de la varianza muestral al valor de la varianza poblacional recordando que Var(Y) = 81:
+\[
+\text{Var}(Y_{100}) = `r var(YR100)` \quad
+\text{Var}(Y_{10000}) = `r var(YR1e4)`
+\]
 
