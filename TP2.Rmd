@@ -369,3 +369,66 @@ Lo mismo podemos observar con los valores de la varianza. Al aumentar el n notam
 \text{Var}(Y_{10000}) = `r var(YR1e4)`
 \]
 
+---
+
+## Punto 3: Promedios de variables aleatorias
+
+Sea \(X \sim U(0,18)\). Definimos:
+
+\[
+X_{15} = \frac{1}{15}\sum_{i=1}^{15} X_i
+\]
+
+donde los \(X_i\) son 15 variables independientes con la misma distribución que \(X\).
+
+### (3.a) Esperanza y varianza de \(X_{15}\)
+
+Usamos propiedades lineales:
+
+\[
+E(X_{15}) = \frac{1}{15}\sum_{i=1}^{15}E(X_i) = \frac{1}{15}\cdot 15\cdot E(X) = E(X) = 9
+\]
+
+\[
+Var(X_{15}) = \frac{1}{15^2}\sum_{i=1}^{15}Var(X_i) = \frac{1}{225}\cdot 15\cdot Var(X) = \frac{Var(X)}{15}
+\]
+
+Como \(Var(X)=27\):
+
+\[
+Var(X_{15}) = \frac{27}{15} = 1.8
+\]
+
+**Comentarios:**  
+- La esperanza sigue siendo 9.  
+- La varianza disminuye al dividir por \(n\), pasa de 27 a 1.8.  
+- En general, promediar reduce la dispersión de los valores.
+
+### (3.b) Función `Xn_dist(n, R)`
+
+Definimos una función que genere \(R\) realizaciones del promedio de \(n\) variables \(X\):
+
+```{r}
+Xn_dist <- function(n, R) {
+  replicate(R, mean(runif(n, min = 0, max = 18)))
+}
+```
+
+### (3.c) Histograma de X15
+
+```{r}
+R <- 10^4
+X15 <- Xn_dist(15, R)
+
+hist(X15, breaks = 30, probability = TRUE,
+     main = expression("Histograma de " ~ X[15]),
+     xlab = "Valor", col = "lightblue", border = "gray")
+
+abline(v = mean(X15), col = "red", lwd = 2, lty = 2)
+```
+
+**Comentarios:**
+
+-El histograma de X15 ya no es uniforme como el de X. Su forma es más acampanada y concentrada alrededor de la media (9).
+
+-Esto se debe a que al promediar 15 valores independientes, se reduce la variabilidad y la distribución se aproxima a una normal.
