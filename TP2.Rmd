@@ -165,80 +165,79 @@ legend("bottomright",
 ## Ejercicio 2
 
 En este caso tenemos una variable aleatoria con distribución exponencial. \( Y \sim \text{Exp}(1/9) \)
-De la misma manera vamos a usar la integral para generar el calculo teorico de la esperanza y luego de la varianza.
+De la misma manera vamos a usar la integral para generar el cálculo teórico de la esperanza y luego de la varianza.
 \[
-\mathbb{E}(Y) = \int_{-\infty}^{\infty} y \cdot f_Y(y) \, dy
+\mathbb{E}(Y) = \int_{0}^{\infty} y \cdot f_Y(y)\,dy
 \]
 
-A su vez, conocemos para la distribución exponencial, su función de densidad:
+A su vez, conocemos para la distribución exponencial su función de densidad:
 \[
-f_Y(y) = \lambda e^{-\lambda y}, \quad \text{para } y \geq 0
+f_Y(y) = \lambda e^{-\lambda y}, \quad \text{para } y \ge 0
 \]
 
-Entonces, la esperanza de \( Y \) se calcula como:
+Entonces, la esperanza de \(Y\) se calcula como:
 \[
-\mathbb{E}(Y) = \int_{0}^{\infty} y \cdot \frac{1}{9} e^{-\frac{1}{9} y} \, dy
+\mathbb{E}(Y) = \int_{0}^{\infty} y \cdot \frac{1}{9}\, e^{-\frac{1}{9}y}\,dy
 \]
 
 Sacamos la constante fuera de la integral:
 \[
-\mathbb{E}(Y) = \frac{1}{9} \int_0^{\infty} y \cdot e^{-\frac{1}{9} y} \, dy
+\mathbb{E}(Y) = \frac{1}{9}\int_{0}^{\infty} y \cdot e^{-\frac{1}{9}y}\,dy
 \]
 
 Aplicamos integración por partes. Usamos:
 \[
-\int u \, dv = uv - \int v \, du
+\int u\,dv = uv - \int v\,du
 \]
 
 Tomamos:
 \[
-u = y \quad \Rightarrow \quad du = dy \\
-dv = e^{-\frac{1}{9} y} dy \quad \Rightarrow \quad v = -9 e^{-\frac{1}{9} y}
+u = y \quad \Rightarrow \quad du = dy, \qquad
+dv = e^{-\frac{1}{9}y}\,dy \quad \Rightarrow \quad v = -9\,e^{-\frac{1}{9}y}
 \]
 
 Entonces:
 \[
-\int_0^{\infty} y \cdot e^{-\frac{1}{9} y} dy = 
-\left. -9y \cdot e^{-\frac{1}{9} y} \right|_0^{\infty} 
-+ \int_0^{\infty} 9 e^{-\frac{1}{9} y} dy
+\int_{0}^{\infty} y \cdot e^{-\frac{1}{9}y}\,dy
+= \left.-9y \cdot e^{-\frac{1}{9}y}\right|_{0}^{\infty}
++ \int_{0}^{\infty} 9\, e^{-\frac{1}{9}y}\,dy
 \]
 
 Evaluamos el primer término:
 \[
-\lim_{y \to \infty} -9y \cdot e^{-\frac{1}{9} y} = 0
-\quad \text{(porque la exponencial decrece más rápido que y crece)} \\
-\text{Y cuando } y = 0, \quad -9 \cdot 0 \cdot e^0 = 0
+\lim_{y \to \infty} \big(-9y \cdot e^{-\frac{1}{9}y}\big) = 0
+\quad \text{(la exponencial decrece más rápido que crece \(y\))}, \qquad
+\text{y cuando } y=0: \ -9 \cdot 0 \cdot e^{0} = 0.
 \]
 
 Entonces ese término da 0.
 
 Evaluamos la integral restante:
 \[
-\int_0^{\infty} 9 e^{-\frac{1}{9} y} dy
+\int_{0}^{\infty} 9\, e^{-\frac{1}{9}y}\,dy
 \]
 
 Sacamos el 9 fuera:
 \[
-= 9 \int_0^{\infty} e^{-\frac{1}{9} y} dy
+= 9 \int_{0}^{\infty} e^{-\frac{1}{9}y}\,dy
 \]
 
 Hacemos la integral:
 \[
-\int_0^{\infty} e^{-\frac{1}{9} y} dy = 
-\left. \frac{-1}{\frac{1}{9}} e^{-\frac{1}{9} y} \right|_0^{\infty} 
-= -9 \left( 0 - 1 \right) = 9
+\int_{0}^{\infty} e^{-\frac{1}{9}y}\,dy
+= \left.-\frac{1}{\frac{1}{9}}\,e^{-\frac{1}{9}y}\right|_{0}^{\infty}
+= -9\,(0-1)=9
 \]
 
 Volvemos a la esperanza:
 \[
-\mathbb{E}(Y) = \frac{1}{9} \cdot 9 = 9
+\mathbb{E}(Y) = \frac{1}{9}\,\Big(9 \cdot 9\Big) = \frac{1}{9}\cdot 81 = 9
 \]
 
 Resultado final:
 \[
-\boxed{\mathbb{E}(Y) = 9}
+\boxed{\mathbb{E}(Y)=9}
 \]
-
 
 
 Teniendo el valor teorico de la esperanza, recordamos que la formula de la varianza es:
