@@ -1,5 +1,5 @@
 ---
-title: "EntregableTP2"
+title: "Entregable TP2"
 subtitle: "Juan Merhle, Juan Martin Goyeneche, Luciano Pozzoli"
 output: pdf_document
 date: "2025-08-26"
@@ -80,148 +80,163 @@ Por lo tanto, la varianza teórica es:
 
 ### Inciso B
 ```{r}
-set.seed(9245)
+set.seed(13)
 X_dist <- function(R){
   return(runif(n= R, min= 0, max=18))
 }
-
-X_R2 <- X_dist(R=2)
-X_R30 <- X_dist(R=30)
-X_R100 <- X_dist(R=100)
-X_R10000 <- X_dist(R=10000)
-
-summary(X_R2)
-var(X_R2)
-summary(X_R30)
-var(X_R30)
-summary(X_R100)
-var(X_R100)
-summary(X_R10000)
-var(X_R10000)
 ```
 
-### Inciso C 
-Recordemos que los valores teoricos que obtuvimos en el inciso a fueron:
 
-\text{E}(X) = 9
-\text{Var}(X) = 27
+## (1.c) Histogramas con R = 100 y R = 10^4
+
+
+```{r}
+R100  <- X_dist(100)
+R1e4  <- X_dist(10^4)
+
+summary(R100)
+summary(R1e4)
+
+
+par(mfrow = c(1,2))
+hist(R100, breaks = 30, main = "X, R = 100", xlab = "x")
+hist(R1e4, breaks = 30, main = "X, R = 10000", xlab = "x")
+par(mfrow = c(1,1))
+
+
+```
 
 La Ley de los Grandes Números nos dice que a medida que el tamaño de la muestra (n) aumente, la diferencia entre la media muestral y la media poblacional disminuye. En otras palabras, con un mayor n en la muestra deberiamos observar que la media muestral se acerca a la esperanza.
 
 En nuestro caso la cantidad de valores que generan las muestras aleatorias estan definidas por el parametro R. Y queremos observar que a mayor R la media muestral se aproxima al valor teorico de la esperanza que calculamos anteriormente. Los resultados obtenidos fueron:
+
 \[
-\overline{X}_2 = `r mean(X_R2)` \quad
-\overline{X}_{30} = `r mean(X_R30)` \quad
-\overline{X}_{100} = `r mean(X_R100)` \quad
-\overline{X}_{10000} = `r mean(X_R10000)`
+\overline{X}_{100}= `r mean(R100)` \quad
+\overline{X}_{10000} = `r mean(R1e4)`
 \]
 
-De los 4 casos observados, 3 cumplen con la tendencia que esperamos observar. Sin embargo podemos ver que la media muestral en R=30 es mas cercana a 9 que la media muestral en R=100. Esto tambien puede deberse a que los datos de la muestra son aleatorios y al ser 30 un tamaño de muestra relativamente pequeño, puede surgir la coincidencia de que los datos sean mas cercanos a 9. Es decir, un caso coincidencial en una muestra pequeña de datos aleatorios no desacredita la Ley de los Grandes Numeros. Al mismo tiempo podemos observar que en R=10000 obtenemos una media muestral muy cercana a 9, mucho mas incluso que en R=100 porque es tal el aumento de tamaño de la muestra que la calidad de los datos lo refleja. Esta diferencia es casi 10 veces mas pequeña en R=10000 de lo que era en R=100
+Vemos que en estas observaciones se cumple que al aumentar n estamos aproximandonos al valor teorico de \( \mathbb{E}(X) = 9\). La diferencia de los promedios muestrales con la esperanza teorica es casi 10 veces menor cuando aumentamos de R=100 a R=10000. Si vieramos los graficos y juzgaramos por intuicion, tambien coincidiriamos que R=10000 es mas parecido a una distribución Uniforme.
 
 De la misma forma, esta tendencia tambien puede observarse en la varianza. Veamos si a medida que el tamaño de la muestra aumenta, se estabiliza la varianza muestral. Los datos que observamos de las varianzas muestrales fueron:
+
 \[
-\text{Var}(X_2) = `r var(X_R2)` \quad
-\text{Var}(X_{30}) = `r var(X_R30)` \quad
-\text{Var}(X_{100}) = `r var(X_R100)` \quad
-\text{Var}(X_{10000}) = `r var(X_R10000)`
+\text{Var}(X_{100}) = `r var(R100)` \quad
+\text{Var}(X_{10000}) = `r var(R1e4)`
 \]
 
 En este caso la convergencia de las varianzas muestrales hacia su valor teorico de 27 es muy evidente. A medida que aumentamos el tamaño de la muestra la dispersion se reduce y se asemeja a la varianza de la distribución.
 
-Cabe destacar que estas muestras de datos se realizan con una sola iteración para cada tamaño, y los datos generados son aleatorios. Es por eso que pueden surgir casos atipicos como vimos con las medias muestrales.
+Cabe destacar que estas muestras de datos se realizan con una sola iteración para cada tamaño, y los datos generados son aleatorios.
 
-### Inciso D
 
-Teniendo en cuenta que el histograma de una distribución uniforme presenta una densidad plana o constante, en este caso queremos observar que a medida que aumentamos R, las muestras de mayor tamaño generan graficos mas similares. Esto sirve para dar una representación visual a los conceptos que venimos observando anteriormente sobre la Ley de los Grandes Números.
+## (1.d) Promedios acumulados y Ley de los Grandes Números
 
-```{r}
+Construimos los promedios acumulados:
 
-hist(X_R100, breaks=30, main="Histograma de X para R = 100", xlab="Valor de X",
-     col="lightblue", border="black")
+\[
+m_n = \frac{1}{n}\sum_{i=1}^n X_i, \quad n=1,2,\dots,10^4
+\]
 
-hist(X_R10000, breaks=30, main="Histograma de X para R = 10000", xlab="Valor de X",
-     col="lightgreen", border="black")
+y los comparamos con el valor teórico \(E(X)=9\).
+
+```{r, fig.width=7, fig.height=5}
+R <- 10^4
+manyX <- X_dist(R)
+
+m_n <- cumsum(manyX) / seq_along(manyX)
+
+plot(seq_along(m_n), m_n, type = "l", lwd = 1,
+     xlab = "n", ylab = "Promedio m_n",
+     main = "Promedios acumulados (X ~ U(0,18))")
+abline(h = 9, col = "red", lty = 2)
+
+# bandas de referencia +/- 2*sd/sqrt(n)
+sigma2 <- 27
+sd_seq <- sqrt(sigma2 / seq_along(m_n))
+lines(seq_along(m_n), 9 + 2*sd_seq, lty = 3)
+lines(seq_along(m_n), 9 - 2*sd_seq, lty = 3)
+
+legend("bottomright",
+       legend = c("m_n", "E(X)=9", "+/- 2*sd/sqrt(n)"),
+       lty = c(1,2,3), bty = "n")
 
 ```
-
-Podemos ver que el aumento en el tamaño de la muestra hizo que la distribución de los datos se asemejara mucho más a una distribución uniforme.  
-De esta forma, damos sustento a lo planteado por la Ley de los Grandes Números.
 
 ## Ejercicio 2
 
 En este caso tenemos una variable aleatoria con distribución exponencial. \( Y \sim \text{Exp}(1/9) \)
-De la misma manera vamos a usar la integral para generar el cálculo teórico de la esperanza y luego de la varianza.
+De la misma manera vamos a usar la integral para generar el calculo teorico de la esperanza y luego de la varianza.
 \[
-\mathbb{E}(Y) = \int_{0}^{\infty} y \cdot f_Y(y)\,dy
+\mathbb{E}(Y) = \int_{-\infty}^{\infty} y \cdot f_Y(y) \, dy
 \]
 
-A su vez, conocemos para la distribución exponencial su función de densidad:
+A su vez, conocemos para la distribución exponencial, su función de densidad:
 \[
-f_Y(y) = \lambda e^{-\lambda y}, \quad \text{para } y \ge 0
+f_Y(y) = \lambda e^{-\lambda y}, \quad \text{para } y \geq 0
 \]
 
-Entonces, la esperanza de \(Y\) se calcula como:
+Entonces, la esperanza de \( Y \) se calcula como:
 \[
-\mathbb{E}(Y) = \int_{0}^{\infty} y \cdot \frac{1}{9}\, e^{-\frac{1}{9}y}\,dy
+\mathbb{E}(Y) = \int_{0}^{\infty} y \cdot \frac{1}{9} e^{-\frac{1}{9} y} \, dy
 \]
 
 Sacamos la constante fuera de la integral:
 \[
-\mathbb{E}(Y) = \frac{1}{9}\int_{0}^{\infty} y \cdot e^{-\frac{1}{9}y}\,dy
+\mathbb{E}(Y) = \frac{1}{9} \int_0^{\infty} y \cdot e^{-\frac{1}{9} y} \, dy
 \]
 
 Aplicamos integración por partes. Usamos:
 \[
-\int u\,dv = uv - \int v\,du
+\int u \, dv = uv - \int v \, du
 \]
 
 Tomamos:
 \[
-u = y \quad \Rightarrow \quad du = dy, \qquad
-dv = e^{-\frac{1}{9}y}\,dy \quad \Rightarrow \quad v = -9\,e^{-\frac{1}{9}y}
+u = y \quad \Rightarrow \quad du = dy \\
+dv = e^{-\frac{1}{9} y} dy \quad \Rightarrow \quad v = -9 e^{-\frac{1}{9} y}
 \]
 
 Entonces:
 \[
-\int_{0}^{\infty} y \cdot e^{-\frac{1}{9}y}\,dy
-= \left.-9y \cdot e^{-\frac{1}{9}y}\right|_{0}^{\infty}
-+ \int_{0}^{\infty} 9\, e^{-\frac{1}{9}y}\,dy
+\int_0^{\infty} y \cdot e^{-\frac{1}{9} y} dy = 
+\left. -9y \cdot e^{-\frac{1}{9} y} \right|_0^{\infty} 
++ \int_0^{\infty} 9 e^{-\frac{1}{9} y} dy
 \]
 
 Evaluamos el primer término:
 \[
-\lim_{y \to \infty} \big(-9y \cdot e^{-\frac{1}{9}y}\big) = 0
-\quad \text{(la exponencial decrece más rápido que crece \(y\))}, \qquad
-\text{y cuando } y=0: \ -9 \cdot 0 \cdot e^{0} = 0.
+\lim_{y \to \infty} -9y \cdot e^{-\frac{1}{9} y} = 0
+\quad \text{(porque la exponencial decrece más rápido que y crece)} \\
+\text{Y cuando } y = 0, \quad -9 \cdot 0 \cdot e^0 = 0
 \]
 
 Entonces ese término da 0.
 
 Evaluamos la integral restante:
 \[
-\int_{0}^{\infty} 9\, e^{-\frac{1}{9}y}\,dy
+\int_0^{\infty} 9 e^{-\frac{1}{9} y} dy
 \]
 
 Sacamos el 9 fuera:
 \[
-= 9 \int_{0}^{\infty} e^{-\frac{1}{9}y}\,dy
+= 9 \int_0^{\infty} e^{-\frac{1}{9} y} dy
 \]
 
 Hacemos la integral:
 \[
-\int_{0}^{\infty} e^{-\frac{1}{9}y}\,dy
-= \left.-\frac{1}{\frac{1}{9}}\,e^{-\frac{1}{9}y}\right|_{0}^{\infty}
-= -9\,(0-1)=9
+\int_0^{\infty} e^{-\frac{1}{9} y} dy = 
+\left. \frac{-1}{\frac{1}{9}} e^{-\frac{1}{9} y} \right|_0^{\infty} 
+= -9 \left( 0 - 1 \right) = 9
 \]
 
 Volvemos a la esperanza:
 \[
-\mathbb{E}(Y) = \frac{1}{9}\,\Big(9 \cdot 9\Big) = \frac{1}{9}\cdot 81 = 9
+\mathbb{E}(Y) = \frac{1}{9} \cdot 9 = 9
 \]
 
 Resultado final:
 \[
-\boxed{\mathbb{E}(Y)=9}
+\boxed{\mathbb{E}(Y) = 9}
 \]
 
 
@@ -312,291 +327,108 @@ Teniendo ya todos los terminos necesarios, procedemos a hacer el calculo teorico
 \boxed{\text{Var}(Y) = 81}
 \]
 
-### Inciso B
+## (2.b) Función generadora de muestras
+
+Definimos la función generadora de muestras \(Y\_dist(R)\) que devuelve \(R\) realizaciones de \(Y\). Usamos nuestra semilla de grupo (13) para asegurar reproducibilidad.
 
 ```{r}
-set.seed(9245)
-Y_dist <- function(R){
-  return(rexp(n = R, rate = 1/9))
+set.seed(13)
+
+Y_dist <- function(R) {
+  rexp(n = R, rate = 1/9)
 }
-
-Y_R2 <- Y_dist(R=2)
-Y_R30 <- Y_dist(R=30)
-Y_R100 <- Y_dist(R=100)
-Y_R10000 <- Y_dist(R=10000)
-
-summary(Y_R2)
-var(Y_R2)
-summary(Y_R30)
-var(Y_R30)
-summary(Y_R100)
-var(Y_R100)
-summary(Y_R10000)
-var(Y_R10000)
 ```
 
-### Inciso C
+## (2.c) Histogramas con R = 100 y R = 10^4
 
-En el caso de la media, podemos notar que a medida que aumentamos R, obtenemos valores cada vez mas aproximados a la esperanza teorica de valor 9. Esta observacion se sustenta con lo que dice la Ley de lo Grandes Numeros. Al menos, esa es la respuesta que estabamos esperando dar. Tenemos expectativa, conociendo la LGN, que los parametros observados se aproximen a sus valores teoricos a medida que aumentamos R. Los valores obtenidos de las medias muestrales son:
+
+```{r}
+YR100  <- Y_dist(100)
+YR1e4  <- Y_dist(10^4)
+
+summary(YR100)
+summary(YR1e4)
+
+
+par(mfrow = c(1,2))
+hist(YR100, breaks = 30, main = "Y, R = 100", xlab = "x")
+hist(YR1e4, breaks = 30, main = "Y, R = 10000", xlab = "x")
+par(mfrow = c(1,1))
+```
+
+En el caso de la media, podemos notar que a medida que aumentamos R, obtenemos valores cada vez mas aproximados a la esperanza teorica de valor 9. Esta observacion se sustenta con lo que dice la Ley de lo Grandes Numeros. Los valores obtenidos de las medias muestrales son:
 \[
-\overline{Y}_2 = `r mean(Y_R2)` \quad
-\overline{Y}_{30} = `r mean(Y_R30)` \quad
-\overline{Y}_{100} = `r mean(Y_R100)` \quad
-\overline{Y}_{10000} = `r mean(Y_R10000)`
+\overline{Y}_{100} = `r mean(YR100)` \quad
+\overline{Y}_{10000} = `r mean(YR1e4)`
 \]
 En este caso podemos ver que la convergencia se cumple y queda en evidencia que la diferencia entre E(Y)=9 y las medias muestrales disminuye a medida que aumenta el tamaño de la muestra.
 
-
-Sin embargo, con los valores de la varianza observada no podemos decir lo mismo. Sabemos que ocurre, pero no podemos mostrarlo con las varianzas de este conjunto de datos aleatorios porque la aproximacion no es tan evidente:
+Lo mismo podemos observar con los valores de la varianza. Al aumentar el n notamos un acercamiento muy grande de la varianza muestral al valor de la varianza poblacional recordando que Var(Y) = 81:
 \[
-\text{Var}(Y_2) = `r var(Y_R2)` \quad
-\text{Var}(Y_{30}) = `r var(Y_R30)` \quad
-\text{Var}(Y_{100}) = `r var(Y_R100)` \quad
-\text{Var}(Y_{10000}) = `r var(Y_R10000)`
+\text{Var}(Y_{100}) = `r var(YR100)` \quad
+\text{Var}(Y_{10000}) = `r var(YR1e4)`
 \]
 
-Recordando que Var(Y)=81, en este conjunto de datos la varianza observada no se acerca a la varianza teorica cada vez que aumento R. Cuando R=100 la varianza observada muestra mayor diferencia que cuando R=30.
+---
 
+## Punto 3: Promedios de variables aleatorias
 
+Sea \(X \sim U(0,18)\). Definimos:
 
-### Inciso D
+\[
+X_{15} = \frac{1}{15}\sum_{i=1}^{15} X_i
+\]
 
-```{r}
+donde los \(X_i\) son 15 variables independientes con la misma distribución que \(X\).
 
-hist(Y_R100, breaks=30, main="Histograma de Y para R = 100", xlab="Valor de Y",
-     col="lightblue", border="black")
+### (3.a) Esperanza y varianza de \(X_{15}\)
 
-hist(Y_R10000, breaks=30, main="Histograma de Y para R = 10000", xlab="Valor de Y",
-     col="lightgreen", border="black")
+Usamos propiedades lineales:
 
-```
+\[
+E(X_{15}) = \frac{1}{15}\sum_{i=1}^{15}E(X_i) = \frac{1}{15}\cdot 15\cdot E(X) = E(X) = 9
+\]
 
-La distribucion que esperamos ver en este caso, debe parecerse a una Exponencial. En ambos casos, podemos ver cierta asimetría con cola hacia la derecha, donde la mayoría de los valores de Y están concentrados cerca de 0. Al comparar los dos gráficos, se nota que cuando el número de repeticiones R es pequeño (R = 100), el histograma es más irregular y tiene más variaciones. En cambio, con un número grande de repeticiones (R = 10,000), el histograma se ve mucho más suave y definido, mostrando con mayor claridad la forma exponencial. Esto pasa porque, al aumentar la cantidad de datos, se obtiene una mejor representación de cómo se comporta la variable Y en general.
+\[
+Var(X_{15}) = \frac{1}{15^2}\sum_{i=1}^{15}Var(X_i) = \frac{1}{225}\cdot 15\cdot Var(X) = \frac{Var(X)}{15}
+\]
 
-## Ejercicio 3
+Como \(Var(X)=27\):
 
-### Inciso A
+\[
+Var(X_{15}) = \frac{27}{15} = 1.8
+\]
 
-Para una variable aleatoria \(X \sim U(0,18)\), sabemos que:
+**Comentarios:**  
+- La esperanza sigue siendo 9.  
+- La varianza disminuye al dividir por \(n\), pasa de 27 a 1.8.  
+- En general, promediar reduce la dispersión de los valores.
 
-- **Esperanza teórica**:
-  $$
-  E(X) = \frac{a + b}{2} = \frac{0 + 18}{2} = 9
-  $$
+### (3.b) Función `Xn_dist(n, R)`
 
-- **Varianza teórica**:
-  $$
-  V(X) = \frac{(b-a)^2}{12} = \frac{(18-0)^2}{12} = \frac{324}{12} = 27
-  $$
-
-Cuando tomamos el promedio de 15 valores de \(X\), o sea, \(X_{15} = \frac{1}{15} \sum_{i=1}^{15} X_i\):
-
-- **Esperanza de \(X_{15}\)**:
-  $$
-  E(X_{15}) = E\left( \frac{1}{15} \sum_{i=1}^{15} X_i \right) = \frac{1}{15} \sum_{i=1}^{15} E(X_i) = \frac{1}{15} \times 15 \times 9 = 9
-  $$
-
-- **Varianza de \(X_{15}\)**:
-  $$
-  V(X_{15}) = V\left( \frac{1}{15} \sum_{i=1}^{15} X_i \right) = \frac{1}{15^2} \sum_{i=1}^{15} V(X_i) = \frac{1}{15^2} \times 15 \times 27 = \frac{405}{225} = 1.8
-  $$
-
-### **En resumen**
-1. **El promedio mantiene la esperanza**: \(E(X_{15}) = E(X) = 9\).
-2. **El promedio reduce la varianza**: \(V(X_{15}) = \frac{V(X)}{n} = 1.8\), es decir, el promedio genera valores más cercanos a la media.
-
-### Inciso B
+Definimos una función que genere \(R\) realizaciones del promedio de \(n\) variables \(X\):
 
 ```{r}
 Xn_dist <- function(n, R) {
-  Xn <- numeric(R)  
-  for (i in 1:R) {
-    X_values <- runif(n = n, min = 0, max = 18)  
-    Xn[i] <- mean(X_values)  
-  }
-  return(Xn)
+  replicate(R, mean(runif(n, min = 0, max = 18)))
 }
-
-Xn_R2 <- Xn_dist(n = 15, R = 2)
-Xn_R30 <- Xn_dist(n = 15, R = 30)
-Xn_R100 <- Xn_dist(n = 15, R = 100)
-Xn_R10000 <- Xn_dist(n = 15, R = 10000)
-
 ```
 
-Esta es la función que devuelve un vector con R realizaciones del promedio de n valores de X.
-
-### Inciso C
-```{r}
-
-summary(Xn_R2)
-var(Xn_R2)
-
-summary(Xn_R30)
-var(Xn_R30)
-
-summary(Xn_R100)
-var(Xn_R100)
-
-summary(Xn_R10000)
-var(Xn_R10000)
-
-```
-
-Estos son la media y la varianza muestral de los datos, con sus respectivos valores de R.
-
-### Inciso D
+### (3.c) Histograma de X15
 
 ```{r}
+R <- 10^4
+X15 <- Xn_dist(15, R)
 
-if (!requireNamespace("kableExtra", quietly = TRUE)) {
-  install.packages("kableExtra")
-}
+hist(X15, breaks = 30, probability = TRUE,
+     main = expression("Histograma de " ~ X[15]),
+     xlab = "Valor", col = "lightblue", border = "gray")
 
-library(kableExtra)
-
-R_values <- c(2, 30, 100, 10000)
-
-results_X <- data.frame(R = integer(), Media = numeric(), Varianza = numeric())
-results_X15 <- data.frame(R = integer(), Media = numeric(), Varianza = numeric())
-
-for (R in R_values) {
-  X_sample <- X_dist(R)
-  X15_sample <- Xn_dist(n = 15, R = R)
-  
-  results_X <- rbind(results_X, data.frame(R = R, Media = mean(X_sample), Varianza = var(X_sample)))
-  results_X15 <- rbind(results_X15, data.frame(R = R, Media = mean(X15_sample), Varianza = var(X15_sample)))
-}
-
-results <- cbind(results_X, results_X15[, -1])
-colnames(results) <- c("R", "E(X)", "Var(X)", "E(X_15)", "Var(X_15)")
-
-results %>%
-  kbl(caption = "Comparación entre $X$ y $X_{15}$", digits = 4) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = FALSE)
-
-```
-Las medias muestrales obtenidas en (3.c) deberían acercarse al valor teórico E(X)=9. Son más precisas que las obtenidas en (1.c), especialmente al usar valores bajos para R, porque al tomar promedios de muestras de tamaño 15 (es decir, al analizar x_15), la varianza teórica es menor que la de X, lo que implica una menor dispersión alrededor de la media.
-
-Comparando con lo discutido en (3.a), al usar el promedio de 15, de manera similar al caso teórico, se reduce la varianza muestral para X_15. También, como aclaramos arriba, no es necesario que el valor de R sea tan alto para que los valores muestrales se parezcan a los teóricos.
-
-### Inciso E
-```{r}
-hist(Xn_R100, breaks=30, main="Histograma de X_15 para R = 100",
-     xlab="Valor de X_15", col="lightblue", border="black")
-
-hist(Xn_R10000, breaks=30, main="Histograma de X_15 para R = 10000",
-     xlab="Valor de X_15", col="lightgreen", border="black")
+abline(v = mean(X15), col = "red", lwd = 2, lty = 2)
 ```
 
-Para R=100, el histograma resulta algo disperso, aunque ya comienza a mostrar una forma acampanada. Al aumentar a R=10,000, esta forma se vuelve más clara y se parece mucho más a una distribución normal. El aumento de R mejora la visualización del histograma, ya que proporciona una muestra más grande y, por tanto, una representación más precisa de la distribución subyacente.
+**Comentarios:**
 
-## Ejercicio 4
+-El histograma de X15 ya no es uniforme como el de X. Su forma es más acampanada y concentrada alrededor de la media (9).
 
-### Inciso A
-```{r}
-set.seed(9248)
-
-R <- 10^6
-X_values <- runif(n = R, min = 0, max = 18)
-Y_values <- rexp(n = R, rate = 1/9)
-
-X_bar_40 <- numeric(R)
-Y_bar_40 <- numeric(R)
-
-for (i in 1:R) {
-  X_bar_40[i] <- mean(runif(n = 40, min = 0, max = 18))
-  Y_bar_40[i] <- mean(rexp(n = 40, rate = 1/9))
-}
-
-par(mfrow = c(2, 2))
-
-hist(X_values, breaks = 50, probability = TRUE, 
-     main = "Histograma de X", xlab = "X", 
-     col = "lightblue", border = "black")
-curve(dunif(x, min = 0, max = 18), add = TRUE, col = "red", lwd = 2)
-
-hist(X_bar_40, breaks = 50, probability = TRUE, 
-     main = "Histograma de X40", xlab = "X40", 
-     col = "lightgreen", border = "black")
-curve(dnorm(x, mean = 9, sd = sqrt(27/40)), add = TRUE, col = "red", lwd = 2)
-
-hist(Y_values, breaks = 50, probability = TRUE, 
-     main = "Histograma de Y", xlab = "Y", 
-     col = "lightcoral", border = "black")
-curve(dexp(x, rate = 1/9), add = TRUE, col = "red", lwd = 2)
-
-hist(Y_bar_40, breaks = 50, probability = TRUE, 
-     main = "Histograma de Y40", xlab = "Y40", 
-     col = "lightpink", border = "black")
-curve(dnorm(x, mean = 9, sd = sqrt(81/40)), add = TRUE, col = "red", lwd = 2)
-
-
-```
-En los histogramas presentados arriba se puede observar gráficamente el efecto del Teorema Central del Límite (TCL). A medida que el tamaño de la muestra n aumenta, las distribuciones de las variables comienzan a asemejarse a una distribución normal, independientemente de la forma original de la distribución de cada variable. Cuando n es pequeño, las variables mantienen la forma de su distribución original; sin embargo, con valores mayores de n, esta forma tiende a adoptar la característica campana de una normal. Este comportamiento es precisamente lo que establece el TCL, que asegura que la distribución de la media muestral converge a una normal cuando n tiende a infinito, sin importar la distribución original de la variable.
-
-### Inciso B
-
-```{r, fig.height=10, fig.width=10}
-set.seed(9248)
-
-n_values <- c(1, 2, 5, 15)
-R_values <- c(100, 1000000)
-
-
-par(mfrow = c(4, 2), mar = c(4, 4, 2, 1), oma = c(1, 1, 2, 1))
-
-for (n in n_values) {
-  for (R in R_values) {
-    X_bar <- numeric(R)
-    for (i in 1:R) {
-      X_bar[i] <- mean(runif(n = n, min = 0, max = 18))
-    }
-    
-    hist(X_bar, breaks = 30, probability = TRUE,
-         main = paste("n =", n, "y R =", R),
-         xlab = "Valor de X", col = "lightblue", border = "black")
-  
-  axis(1, at=seq(0,18, by=2))
-    if (n > 1) {
-      curve(dnorm(x, mean = 9, sd = sqrt(27/n)), add = TRUE, col = "red", lwd = 2)
-    }
-  }
-}
-```
-Analizando los efectos de modificar los valores de n y R, se pueden distinguir dos cosas. Al incrementar el valor de n, se hacen evidentes los efectos del Teorema Central del Límite descritos anteriormente: las distribuciones de las variables comienzan a asemejarse progresivamente a una distribución normal, dejando atrás las formas particulares que tienen según su distribución original. Por otro lado, al aumentar el valor de R (o sea, la cantidad de repeticiones) lo que se manifiesta es el efecto de la Ley de los Grandes Números: la variabilidad de los resultados disminuye.
-
-### Inciso C
-
-```{r, fig.height=10, fig.width=10}
-set.seed(9248)
-
-n_values <- c(1, 2, 5, 15)
-R_values <- c(100, 1000000)
-
-par(mfrow = c(4, 2), mar = c(4, 4, 2, 1), oma = c(1, 1, 2, 1))
-
-for (n in n_values) {
-  for (R in R_values) {
-    Y_bar <- numeric(R)
-    for (i in 1:R) {
-      Y_bar[i] <- mean(rexp(n = n, rate = 1/9))
-    }
-    
-    hist(Y_bar, breaks = 30, probability = TRUE,
-         main = paste("n =", n, "y R =", R),
-         xlab = "Valor de Y", col = "lightcoral", border = "black")
-  
-    axis(1, at=seq(0, max(Y_bar), by=5))
-    if (n > 1) {
-      curve(dnorm(x, mean = 9, sd = sqrt(81/n)), add = TRUE, col = "red", lwd = 2)
-    }
-  }
-}
-```
-
-Si vemos los histogramas generados con un número bajo de repeticiones (R=100), se nota que aún no se ajustan completamente a la forma de una distribución normal. Pero al aumentar considerablemente la cantidad de R (por ejemplo, a R=1000000) se logra un ajuste mucho más preciso a la curva normal teórica, lo que también permite obtener estimaciones más cercanas a los valores esperados, mejorando la representación muestral de las mismas.
-
-En cuanto al comportamiento de las variables \( \overline{X}_n \) e \( \overline{Y}_n \), ambas tienden hacia una distribución normal a medida que el tamaño de la muestra \( n \) crece, manteniendo una media igual a \( \mu \) y una varianza que disminuye proporcionalmente con \( n \).  
-También se observa que la variable \( \overline{Y}_n \), proveniente de una distribución exponencial, necesita un valor de \( n \) más elevado para alcanzar un nivel de convergencia similar al de \( \overline{X}_n \), cuya distribución original es uniforme.  
-Esto indica que la velocidad de convergencia hacia la normalidad depende de la forma de la distribución original, siendo más lenta en el caso exponencial.
+-Esto se debe a que al promediar 15 valores independientes, se reduce la variabilidad y la distribución se aproxima a una normal.
