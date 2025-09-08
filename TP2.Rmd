@@ -1,5 +1,5 @@
 ---
-title: "Entregable TP2"
+title: "Trabajo Práctico 2: Ley de los Grandes Números y Teorema Central del Límite"
 subtitle: "Juan Merhle, Juan Martin Goyeneche, Luciano Pozzoli"
 output: pdf_document
 date: "2025-08-26"
@@ -162,82 +162,39 @@ legend("bottomright",
 
 ```
 
-## Ejercicio 2
+## (2.a) Esperanza de \(Y \sim \mathrm{Exp}(\lambda)\) con \(\lambda = \tfrac{1}{9}\)
 
-En este caso tenemos una variable aleatoria con distribución exponencial. \( Y \sim \text{Exp}(1/9) \)
-De la misma manera vamos a usar la integral para generar el cálculo teórico de la esperanza y luego de la varianza.
+La densidad es \(f_Y(y) = \lambda e^{-\lambda y}\) para \(y \ge 0\). Entonces,
 \[
-\mathbb{E}(Y) = \int_{0}^{\infty} y \cdot f_Y(y)\,dy
+\mathbb{E}(Y) \;=\; \int_{0}^{\infty} y \,\lambda e^{-\lambda y}\,dy
+\]
+Para \(\lambda=\tfrac{1}{9}\),
+\[
+\mathbb{E}(Y) \;=\; \frac{1}{9}\int_{0}^{\infty} y\, e^{-\frac{1}{9}y}\,dy
 \]
 
-A su vez, conocemos para la distribución exponencial su función de densidad:
+**Integración por partes.** Tomamos \(u=y \Rightarrow du=dy\) y \(dv=e^{-\frac{1}{9}y}dy \Rightarrow v=-9\,e^{-\frac{1}{9}y}\).
 \[
-f_Y(y) = \lambda e^{-\lambda y}, \quad \text{para } y \ge 0
+\int_{0}^{\infty} y\, e^{-\frac{1}{9}y}\,dy
+= \Big[-9y\,e^{-\frac{1}{9}y}\Big]_{0}^{\infty} + \int_{0}^{\infty} 9\,e^{-\frac{1}{9}y}\,dy
 \]
-
-Entonces, la esperanza de \(Y\) se calcula como:
+El primer término es \(0\) (porque \(y e^{-\frac{1}{9}y}\to 0\) al \(+\infty\) y en \(0\) vale \(0\)). Para la integral restante:
 \[
-\mathbb{E}(Y) = \int_{0}^{\infty} y \cdot \frac{1}{9}\, e^{-\frac{1}{9}y}\,dy
+\int_{0}^{\infty} 9\,e^{-\frac{1}{9}y}\,dy
+= 9 \left[\,-9\,e^{-\frac{1}{9}y}\,\right]_{0}^{\infty}
+= 9\,(0 - (-9)) = 81
 \]
-
-Sacamos la constante fuera de la integral:
+Por lo tanto,
 \[
-\mathbb{E}(Y) = \frac{1}{9}\int_{0}^{\infty} y \cdot e^{-\frac{1}{9}y}\,dy
+\mathbb{E}(Y) \;=\; \frac{1}{9}\cdot 81 \;=\; 9.
 \]
-
-Aplicamos integración por partes. Usamos:
-\[
-\int u\,dv = uv - \int v\,du
-\]
-
-Tomamos:
-\[
-u = y \quad \Rightarrow \quad du = dy, \qquad
-dv = e^{-\frac{1}{9}y}\,dy \quad \Rightarrow \quad v = -9\,e^{-\frac{1}{9}y}
-\]
-
-Entonces:
-\[
-\int_{0}^{\infty} y \cdot e^{-\frac{1}{9}y}\,dy
-= \left.-9y \cdot e^{-\frac{1}{9}y}\right|_{0}^{\infty}
-+ \int_{0}^{\infty} 9\, e^{-\frac{1}{9}y}\,dy
-\]
-
-Evaluamos el primer término:
-\[
-\lim_{y \to \infty} \big(-9y \cdot e^{-\frac{1}{9}y}\big) = 0
-\quad \text{(la exponencial decrece más rápido que crece \(y\))}, \qquad
-\text{y cuando } y=0: \ -9 \cdot 0 \cdot e^{0} = 0.
-\]
-
-Entonces ese término da 0.
-
-Evaluamos la integral restante:
-\[
-\int_{0}^{\infty} 9\, e^{-\frac{1}{9}y}\,dy
-\]
-
-Sacamos el 9 fuera:
-\[
-= 9 \int_{0}^{\infty} e^{-\frac{1}{9}y}\,dy
-\]
-
-Hacemos la integral:
-\[
-\int_{0}^{\infty} e^{-\frac{1}{9}y}\,dy
-= \left.-\frac{1}{\frac{1}{9}}\,e^{-\frac{1}{9}y}\right|_{0}^{\infty}
-= -9\,(0-1)=9
-\]
-
-Volvemos a la esperanza:
-\[
-\mathbb{E}(Y) = \frac{1}{9}\,\Big(9 \cdot 9\Big) = \frac{1}{9}\cdot 81 = 9
-\]
-
-Resultado final:
 \[
 \boxed{\mathbb{E}(Y)=9}
 \]
+
+> Observación: en general, si \(Y\sim \mathrm{Exp}(\lambda)\), entonces \(\mathbb{E}(Y)=\frac{1}{\lambda}\) y \(\mathrm{Var}(Y)=\frac{1}{\lambda^2}\). Para \(\lambda=\tfrac{1}{9}\), \(\mathrm{Var}(Y)=81\).
+
+
 
 
 Teniendo el valor teorico de la esperanza, recordamos que la formula de la varianza es:
@@ -362,7 +319,7 @@ En el caso de la media, podemos notar que a medida que aumentamos R, obtenemos v
 \]
 En este caso podemos ver que la convergencia se cumple y queda en evidencia que la diferencia entre E(Y)=9 y las medias muestrales disminuye a medida que aumenta el tamaño de la muestra.
 
-Lo mismo podemos observar con los valores de la varianza. Al aumentar el n notamos un acercamiento muy grande de la varianza muestral al valor de la varianza poblacional recordando que Var(Y) = 81:
+Lo mismo podemos observar con los valores de la varianza. Al aumentar el n notamos un acercamiento muy grande de la varianza muestral al valor de la varianza poblacional. Recordando que Var(Y) = 81:
 \[
 \text{Var}(Y_{100}) = `r var(YR100)` \quad
 \text{Var}(Y_{10000}) = `r var(YR1e4)`
@@ -431,3 +388,192 @@ abline(v = mean(X15), col = "red", lwd = 2, lty = 2)
 -El histograma de X15 ya no es uniforme como el de X. Su forma es más acampanada y concentrada alrededor de la media (9).
 
 -Esto se debe a que al promediar 15 valores independientes, se reduce la variabilidad y la distribución se aproxima a una normal.
+
+### (4.a) Histogramas de X, X_{40}, Y, Y_{40} con curvas teóricas.
+
+En este inciso aplicamos el Teorema Central del Límite a \(X\sim U(0,18)\) y \(Y\sim \text{Exp}(1/9)\).  
+Primero mostramos la forma de las distribuciones originales y luego la de los promedios de 40 observaciones.  
+Superponemos las curvas teóricas para ver cómo aparecen las aproximaciones normales.
+
+```{r}
+set.seed(13)
+
+R_big <- 10^6
+n <- 40
+
+#Usamos funciones definidas antes
+X <- X_dist(R_big)
+Y <- Y_dist(R_big)
+
+#Promedios de n=40
+X40 <- replicate(R_big, mean(X_dist(n)))
+Y40 <- replicate(R_big, mean(Y_dist(n)))
+
+#Parámetros teóricos
+mu_X <- 9
+var_X <- 27
+mu_Y <- 9
+var_Y <- 81
+
+#Gráficos
+par(mfrow = c(2,2))
+
+hist(X, breaks = 60, freq = FALSE, main = X ~ U(0,18))
+curve(dunif(x,0,18), add = TRUE, col="red", lwd=2)
+
+hist(X40, breaks = 60, freq = FALSE, main = expression(X[40]))
+curve(dnorm(x, mean=mu_X, sd=sqrt(var_X/n)), add = TRUE, col="blue", lwd=2)
+
+hist(Y, breaks = 60, freq = FALSE, main = expression(Y %~% Exp(1/9)))
+curve(dexp(x, rate=1/9), add = TRUE, col="red", lwd=2)
+
+hist(Y40, breaks = 60, freq = FALSE, main = expression(Y[40]))
+curve(dnorm(x, mean=mu_Y, sd=sqrt(var_Y/n)), add = TRUE, col="blue", lwd=2)
+
+par(mfrow = c(1,1))
+
+```
+
+### 4(b) — TCL con \(X_n\): efecto de \(n\) y \(R\)
+
+Ahora estudiamos cómo varía la distribución de \(X_n\) (el promedio de \(n\) uniformes) cuando cambiamos \(n\) y el número de simulaciones \(R\).  
+El panel 5×2 nos deja comparar la forma de los histogramas y el ajuste a la normal según el tamaño de la muestra y el tamaño de la simulación.
+```{r}
+set.seed(13)
+
+Xn_dist <- function(n, R) replicate(R, mean(X_dist(n)))
+
+par(
+  mfrow = c(5, 2),
+  mar   = c(2, 2, 2, 1))
+
+n_vals <- c(1, 2, 5, 15, 40)
+R_vals <- c(1e2, 1e6)
+
+
+Xn <- replicate(10^2, mean(X_dist(1)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[1] * ", R=100"), xlab = "", ylab = "",
+     ylim = c(0, 0.2))
+curve(dnorm(x, mean = 9, sd = sqrt(27/1)), add = TRUE, lwd = 2)
+
+Xn <- replicate(10^6, mean(X_dist(1)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[1] * ", R=10"^6), xlab = "", ylab = "",
+     ylim = c(0, 0.2))
+curve(dnorm(x, mean = 9, sd = sqrt(27/1)), add = TRUE, lwd = 2)
+
+Xn <- replicate(10^2, mean(X_dist(2)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[2] * ", R=100"), xlab = "", ylab = "",
+     ylim = c(0, 0.2))
+curve(dnorm(x, mean = 9, sd = sqrt(27/2)), add = TRUE, lwd = 2)
+
+Xn <- replicate(10^6, mean(X_dist(2)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[2] * ", R=10"^6), xlab = "", ylab = "",
+     ylim = c(0, 0.2))
+curve(dnorm(x, mean = 9, sd = sqrt(27/2)), add = TRUE, lwd = 2)
+
+Xn <- replicate(10^2, mean(X_dist(5)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[5] * ", R=100"), xlab = "", ylab = "",
+     ylim = c(0, 0.25))
+curve(dnorm(x, mean = 9, sd = sqrt(27/5)), add = TRUE, lwd = 2)
+
+Xn <- replicate(10^6, mean(X_dist(5)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[5] * ", R=10"^6), xlab = "", ylab = "",
+     ylim = c(0, 0.25))
+curve(dnorm(x, mean = 9, sd = sqrt(27/5)), add = TRUE, lwd = 2)
+
+Xn <- replicate(10^2, mean(X_dist(15)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[15] * ", R=100"), xlab = "", ylab = "",
+     ylim = c(0, 0.6))
+curve(dnorm(x, mean = 9, sd = sqrt(27/15)), add = TRUE, lwd = 2)
+
+Xn <- replicate(10^6, mean(X_dist(15)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[15] * ", R=10"^6), xlab = "", ylab = "",
+     ylim = c(0, 0.6))
+curve(dnorm(x, mean = 9, sd = sqrt(27/15)), add = TRUE, lwd = 2)
+
+Xn <- replicate(10^2, mean(X_dist(40)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[40] * ", R=100"), xlab = "", ylab = "",
+     ylim = c(0, 0.6))
+curve(dnorm(x, mean = 9, sd = sqrt(27/40)), add = TRUE, lwd = 2)
+
+Xn <- replicate(10^6, mean(X_dist(40)))
+hist(Xn, breaks = 60, probability = TRUE,
+     main = expression(X[40] * ", R=10"^6), xlab = "", ylab = "",
+     ylim = c(0, 0.6))
+curve(dnorm(x, mean = 9, sd = sqrt(27/40)), add = TRUE, lwd = 2)
+
+par(mfrow = c(1,1))
+
+
+
+```
+**Comentarios (Xn):**
+
+- **n = 1:** uniforme en [0,18], media = 9. Con R grande se ve perfectamente rectangular.  
+- **n = 2:** distribución triangular, ya se “redondea” en el centro.  
+- **n = 5:** comienza a verse simétrica y con forma de campana; la normal se ajusta mejor.  
+- **n = 15:** claramente normal, muy concentrada alrededor de 9; varianza mucho menor.  
+- **n = 40:** se ajusta muy bien a la normal teórica \( \mathcal{N}(9, 27/40) \), extremos casi nulos. 
+- **se puede concluir:** como dice el TCL, a medida que la muestra sea lo suficientemente grande, la media de la muestra tiene distribucion aproximadamente normal
+
+**Efecto de R:** más simulaciones → histograma más suave.
+
+
+## 4(c) — TCL con \(Y_n\): efecto de \(n\) y \(R\)
+
+Finalmente repetimos el análisis para \(Y_n\) (promedios de exponenciales).  
+Así podemos discutir cómo la convergencia hacia la normal es más lenta en una distribución asimétrica: hacen falta valores de \(n\) más grandes para que la forma se parezca a una campana.
+```{r}
+set.seed(13)
+
+# función general: devuelve R realizaciones del promedio de n muestras de Y
+Yn_dist <- function(n, R) {
+  replicate(R, mean(Y_dist(n)))
+}
+
+n_vals <- c(1, 2, 5, 15, 40)
+R_vals <- c(10^2, 10^6)
+
+par(mfrow = c(5,2), mar= c(2, 2, 2, 1))
+for (n in n_vals) {
+  for (R in R_vals) {
+    Yn <- Yn_dist(n, R)
+    hist(Yn, breaks = 50, freq = FALSE,
+         main = bquote(Y[.(n)] ~ ", R=" ~ .(format(R, scientific=FALSE))),
+         xlab = "", ylab = "",
+         ylim = c(0, 0.3))
+    
+    #Superponemos la normal del TCL
+    mu <- 9
+    sd <- sqrt(81 / n)   #varianza de Y es 81
+    curve(dnorm(x, mean = mu, sd = sd), add = TRUE, col="blue", lwd=2)
+  }
+}
+par(mfrow = c(1,1))
+```
+**Comentarios (Yn):**
+
+- **n = 1:** distribución exponencial pura, muy asimétrica a la derecha, media = 9.  
+- **n = 2:** sigue siendo claramente asimétrica, pero empieza a concentrarse alrededor de 9.  
+- **n = 5:** la media se mantiene en 9, la varianza ya es menor (\(81/5\)), pero todavía hay cola a la derecha.  
+- **n = 15:** la forma empieza a parecer normal; la asimetría se atenúa bastante.  
+- **n = 40:** se observa un buen ajuste a la normal \(\mathcal{N}(9, 81/40)\), la cola derecha es mucho menos notoria.  
+
+**Comparación con Xn:**  
+- En ambos casos la media se mantiene en 9 y la varianza decrece como \(1/n\).  
+- La diferencia está en la **velocidad de convergencia**: para la uniforme, con \(n=5\) ya se veía muy normal; en la exponencial, recién con \(n=15\) o más se aproxima bien a la campana.
+
+**Conclusion Ejercicio 4**
+Tanto para la uniforme como para la exponencial, los promedios mantienen la misma media que la distribución original y su varianza disminuye proporcionalmente a \(1/n\).  
+En el caso de \(X_n\) (uniforme), la convergencia hacia la normal es rápida: con valores de \(n\) moderados ya se observa un buen ajuste.  
+En el caso de \(Y_n\) (exponencial), la asimetría inicial hace que la convergencia sea más lenta, necesitando \(n\) mayores para que la forma se aproxime bien a una normal.  
+En conjunto, los resultados ilustran con claridad cómo el TCL opera de manera general, aunque la velocidad del ajuste depende de la distribución original.
